@@ -1,21 +1,18 @@
-```txt
-npm install
-npm run dev
-```
+# てん と せん — グラフ・ネットワーク理論 学習サイト
 
-```txt
-npm run deploy
-```
+関西学院大学「グラフ・ネットワーク理論」（古谷倫貴 先生）の講義プリントをもとに、サカイ先輩とリョウガくんの対話・さわれるラボ・キネティックタイポグラフィで直感的に学ぶサイト。
 
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
+## 収録
+- 第1回 ガイダンス・グラフの定義・次数（ラボ6＋演習解答：ペテルセングラフの同型写像）
+- 第2回 部分グラフ・補グラフ・特徴的なグラフ（ラボ6＋演習解答：δ(H) ≥ d(G)/2 の部分グラフ）
+- 第3回 連結性・距離・木（ラボ7＋演習解答：定理3.2の証明）
 
-```txt
-npm run cf-typegen
-```
+## ルート
+- `/` ホーム ／ `/lec/1` `/lec/2` `/lec/3` 各回（#report で演習解答）／ `/map` 定理マップ ／ `/words` ことば図鑑
 
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+## 構成
+- Hono（シェル配信）＋ ES Modules（public/static/js）。データ保存は localStorage（クイズ・チェックリスト）のみ。
+- 新しい回の追加：`content/index.js` に登録し `content/lecN.js`（sections / report / quiz / checklist）と `labs/labN.js` を作成。
 
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
-```
+## 未実装・次の一手
+- 第4回以降のプリント追加、定理3.7の演習課題（プリント本体待ち）、本番デプロイ
