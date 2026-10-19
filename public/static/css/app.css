@@ -131,7 +131,7 @@ body.cursor-hot #cursor-head{r:15px;fill:var(--lemon)}
 .btn.ink{background:var(--ink);color:var(--paper)}
 .btn.sm{padding:6px 14px;font-size:13px}
 .btn[disabled]{opacity:.45;pointer-events:none}
-.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:2px solid var(--ink);background:var(--card);font-size:13px;font-weight:700}
+.chip{font-family:var(--f-round);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:2px solid var(--ink);background:var(--card);font-size:13px;font-weight:700}
 .chip i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);display:inline-block}
 .eyebrow{font-family:var(--f-disp);font-weight:600;font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;gap:10px}
 .eyebrow::before{content:"";width:22px;height:2.5px;background:var(--ink);border-radius:2px}

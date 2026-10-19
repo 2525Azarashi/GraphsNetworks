@@ -7,6 +7,7 @@ function heroArt(L, host) {
   let pos, E
   if (L.no === 1) { const ids = 'abcdefg'.split(''); pos = { ...circle(ids.slice(0, 6), 240, 200, 130), g: [240, 200] }; E = [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['e', 'f'], ['f', 'a'], ['g', 'a'], ['g', 'c'], ['g', 'e'], ['b', 'g']] }
   else if (L.no === 2) { const o = ['o0', 'o1', 'o2', 'o3', 'o4'], i = ['i0', 'i1', 'i2', 'i3', 'i4']; pos = { ...circle(o, 240, 205, 150), ...circle(i, 240, 205, 66) }; E = [...o.map((x, k) => [x, o[(k + 1) % 5]]), ...o.map((x, k) => [x, i[k]]), ...i.map((x, k) => [x, i[(k + 2) % 5]])] }
+  else if (L.no === 4) { pos = { a: [70, 120], b: [70, 280], c: [160, 200], d: [260, 200], e: [330, 100], f: [330, 300], g: [420, 200], hh: [410, 60], ii: [450, 340] }; E = [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['d', 'f'], ['e', 'g'], ['f', 'g'], ['e', 'f'], ['e', 'hh'], ['g', 'ii'], ['f', 'ii']] }
   else { pos = { r: [240, 60], a: [140, 150], b: [340, 150], c: [80, 260], d: [190, 270], e: [300, 270], f: [400, 260], g: [240, 350], h: [440, 350] }; E = [['r', 'a'], ['r', 'b'], ['a', 'c'], ['a', 'd'], ['b', 'e'], ['b', 'f'], ['e', 'g'], ['f', 'h']] }
   const ids = Object.keys(pos)
   g.load({ nodes: toNodes(pos, Object.fromEntries(ids.map((id, k) => [id, { color: PCYCLE[k % 6] }]))), edges: E })

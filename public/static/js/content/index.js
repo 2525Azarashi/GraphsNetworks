@@ -27,7 +27,16 @@ export const LECTURES = [
     keywords: ['連結性', '距離', '半径', '直径', '木', '全域木'],
     load: () => import('./lec3.js'),
   },
+  {
+    no: 4, slug: '4', color: 'lav', hex: '#B9A6FF',
+    title: '連結度',
+    short: 'こわれにくさ・ぶひん・みみ',
+    lead: '何個こわれたら切れる？ 丈夫な部品＝ブロックに分けて木にし、2-連結グラフは “輪っか＋耳” で全部作れる。',
+    goals: ['連結度の定義を理解し、グラフの連結度が計算できる', 'グラフのブロック木が構成できる', '耳分解の定義を理解し、2-連結グラフを再帰的に構成できる'],
+    keywords: ['連結度', '切断点', '頂点切断', 'ブロック', 'ブロック分解', '耳分解'],
+    load: () => import('./lec4.js'),
+  },
 ]
 export const UPCOMING = [
-  { no: 4, title: 'Coming soon', short: '次の講義プリントを待っています' },
+  { no: 5, title: 'Coming soon', short: '次の講義プリントを待っています' },
 ]

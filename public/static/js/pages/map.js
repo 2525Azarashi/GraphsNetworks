@@ -34,14 +34,28 @@ const N = [
   ['t36', '定理 3.6', 3, 'thm', '$|E(T)|=|V(T)|-1$。'],
   ['t37', '定理 3.7', 3, 'thm', '木 ⟺ 道が一意 ⟺ 極小連結 ⟺ 極大無閉路。'],
   ['t38', '定理 3.8', 3, 'thm', '連結グラフは全域木を持つ。'],
+  ['def-cut', '切断点・橋', 4, 'def', '$c(G-x)>c(G)$ の頂点、$c(G-e)>c(G)$ の辺。'],
+  ['def-vcut', '頂点切断', 4, 'def', '$G-S$ が非連結となる $S\\subseteq V(G)$。'],
+  ['def-kappa', 'k-連結・連結度', 4, 'def', '位数 $\\ge k+1$、頂点切断の大きさ $\\ge k$。最大の $k$ が $\\kappa(G)$。'],
+  ['t41', '定理 4.1', 4, 'thm', '$\\kappa(G)\\le\\delta(G)$。'],
+  ['def-block', 'ブロック', 4, 'def', '極大な $K_1$・$K_2$・2-連結誘導部分グラフ。'],
+  ['p42', '命題 4.2', 4, 'thm', '異なるブロックの共有頂点は高々 1 個。'],
+  ['p43', '命題 4.3', 4, 'thm', '各辺はちょうど 1 個のブロックに含まれる。'],
+  ['t44', '定理 4.4', 4, 'thm', 'ブロック林 $B(G)$ は林。'],
+  ['def-ear', '耳・耳の追加', 4, 'def', '内点の次数がすべて 2 の道。'],
+  ['p45', '命題 4.5', 4, 'thm', '2-連結に耳を追加しても 2-連結。'],
+  ['t46', '定理 4.6', 4, 'thm', '2-連結 ⟺ 耳分解をもつ。'],
 ]
 const L = [
   ['def-g', 'def-iso'], ['def-g', 'def-deg'], ['def-deg', 't11'], ['t11', 'c111'], ['c111', 'c112'], ['c112', 't12'], ['def-deg', 'def-seq'], ['def-iso', 'def-seq'], ['t11', 't13'], ['def-seq', 't13'], ['t13', 'a11'],
   ['def-g', 'def-sub'], ['def-sub', 't21'], ['t11', 't21'], ['def-sub', 'def-comp'], ['def-deg', 'def-comp'], ['def-sub', 'def-path'], ['def-path', 't22'], ['def-deg', 't22'], ['t22', 't23'], ['def-path', 'def-bip'], ['def-bip', 't24'], ['def-path', 't24'],
   ['def-walk', 'p31'], ['def-path', 'p31'], ['p31', 'def-conn'], ['def-conn', 't32'], ['def-comp', 't32'], ['p31', 'def-dist'], ['def-dist', 't33'], ['def-dist', 't24'],
   ['def-conn', 'def-tree'], ['def-path', 'def-tree'], ['t22', 't34'], ['t23', 't34'], ['def-tree', 't34'], ['t34', 'p35'], ['t34', 't36'], ['p35', 't36'], ['def-tree', 't37'], ['t37', 't38'], ['def-sub', 't38'],
+  ['def-conn', 'def-cut'], ['def-conn', 'def-vcut'], ['def-vcut', 'def-kappa'], ['def-kappa', 't41'], ['def-deg', 't41'], ['def-kappa', 'def-block'], ['def-sub', 'def-block'],
+  ['def-block', 'p42'], ['p42', 'p43'], ['p43', 't44'], ['def-cut', 't44'], ['def-tree', 't44'], ['def-path', 'def-ear'], ['def-ear', 'p45'], ['def-kappa', 'p45'],
+  ['p45', 't46'], ['t41', 't46'], ['t23', 't46'],
 ]
-const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky }
+const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav }
 
 export async function render(app) {
   document.title = '定理マップ — てん と せん'
@@ -52,11 +66,11 @@ export async function render(app) {
   const wrap = h('div.map-wrap', svg,
     h('div.map-legend', h('div.eyebrow', 'Theorem Map'), h('div.ttl', kt('授業そのものが、', '', 200, 50), h('br'), kt('ひとつのグラフ。', '', 600, 50)),
       h('p', '定義（点線）→ 定理（実線）の依存関係。ノードをタップすると内容と “つながり” が光ります。ドラッグもできます。'),
-      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3].map((n) => h('span.chip', h('i', { style: { background: COL[n] } }), `第${n}回`)))),
+      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
     panel)
   app.append(wrap)
   // positions: initial by lecture band
-  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 300 + (lec - 1) * 400 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
+  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 230 + (lec - 1) * 310 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
   const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]))
   const links = L.map(([a, b]) => ({ a: idx[a], b: idx[b], el: s('line', { class: 'ml' }) }))
   links.forEach((l) => gL.append(l.el))
@@ -104,7 +118,7 @@ export async function render(app) {
       A.vx += dx * f; A.vy += dy * f; B.vx -= dx * f; B.vy -= dy * f
     }
     links.forEach(({ a, b }) => { const A = nodes[a], B = nodes[b]; const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) + .01; const f = (d - 95) * 0.02; A.vx += dx / d * f; A.vy += dy / d * f; B.vx -= dx / d * f; B.vy -= dy / d * f })
-    nodes.forEach((n) => { const tx = 330 + (n.lec - 1) * 380; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
+    nodes.forEach((n) => { const tx = 230 + (n.lec - 1) * 310; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
     nodes.forEach((n) => { if (n === drag) { n.vx = n.vy = 0; return } n.vx *= .78; n.vy *= .78; n.x += n.vx * temp; n.y += n.vy * temp; n.x = Math.max(40, Math.min(W - 40, n.x)); n.y = Math.max(50, Math.min(H - 50, n.y)) })
     temp = Math.max(.06, temp * .995)
     links.forEach((l) => { const A = nodes[l.a], B = nodes[l.b]; l.el.setAttribute('x1', A.x); l.el.setAttribute('y1', A.y); l.el.setAttribute('x2', B.x); l.el.setAttribute('y2', B.y) })

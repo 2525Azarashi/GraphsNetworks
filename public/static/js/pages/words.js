@@ -38,6 +38,15 @@ const WORDS = [
   ['木', 'Tree', 3, '連結な林。$|E|=|V|-1$。', () => ({ pos: { r: [130, 20], a: [80, 60], b: [180, 60], c: [50, 100], d: [110, 100], e: [180, 100] }, E: [['r', 'a'], ['r', 'b'], ['a', 'c'], ['a', 'd'], ['b', 'e']] })],
   ['葉', 'Leaf', 3, '次数 1 の頂点。位数 2 以上の木は 2 枚以上持つ。', () => ({ pos: { r: [130, 20], a: [80, 60], b: [180, 60], c: [50, 100], d: [110, 100], e: [180, 100] }, E: [['r', 'a'], ['r', 'b'], ['a', 'c'], ['a', 'd'], ['b', 'e']], col: { c: 'mint', d: 'mint', e: 'mint' } })],
   ['全域木', 'Spanning tree', 3, '木である全域部分グラフ。連結グラフには必ずある。', () => ({ pos: C(ring(6)), E: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'v3'], ['v0', 'v4'], ['v4', 'v5']] })],
+  ['切断点', 'Cut vertex', 4, '$c(G-x)>c(G)$ を満たす頂点。抜くと成分が増える。', () => ({ pos: { a: [60, 40], b: [60, 90], x: [130, 60], c: [200, 40], d: [200, 90] }, E: [['a', 'b'], ['a', 'x'], ['b', 'x'], ['x', 'c'], ['x', 'd'], ['c', 'd']], col: { x: 'pink' } })],
+  ['橋', 'Bridge', 4, '$c(G-e)>c(G)$ を満たす辺（切断辺）。抜くと必ず +1。', () => ({ pos: { a: [50, 40], b: [50, 90], c: [100, 60], d: [170, 60], e: [220, 40], f: [220, 90] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['d', 'f'], ['e', 'f']], hi: [['c', 'd']] })],
+  ['頂点切断', 'Vertex cut', 4, '$G-S$ が非連結になる頂点集合 $S$。', () => ({ pos: C(ring(6)), E: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), col: { v0: 'pink', v3: 'pink' } })],
+  ['k-連結', 'k-connected', 4, '位数 $\\ge k+1$ で、どの $k-1$ 個以下の頂点を抜いても連結。', () => ({ pos: { ...circle(['a', 'b', 'c'], 130, 60, 50), ...circle(['d', 'e', 'f'], 130, 60, 22) }, E: [['a', 'b'], ['b', 'c'], ['c', 'a'], ['d', 'e'], ['e', 'f'], ['f', 'd'], ['a', 'd'], ['b', 'e'], ['c', 'f']] })],
+  ['連結度', 'Connectivity', 4, '$\\kappa(G)$：$G$ が $k$-連結となる最大の $k$。$\\kappa\\le\\delta$。', () => { const ids = ring(5); const E = []; ids.forEach((a, i) => ids.slice(i + 1).forEach((b) => E.push([a, b]))); return { pos: C(ids), E, tag: { v0: 4 } } }],
+  ['ブロック', 'Block', 4, '極大な $K_1$・$K_2$・2-連結の誘導部分グラフ。', () => ({ pos: { a: [50, 30], b: [50, 90], c: [100, 60], d: [160, 60], e: [210, 30], f: [210, 90] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['d', 'f'], ['e', 'f']], col: { a: 'pink', b: 'pink', c: 'lemon', d: 'lemon', e: 'mint', f: 'mint' } })],
+  ['ブロック木', 'Block tree', 4, 'ブロックと切断点を交互につないだ木 $B(G)$。葉は端ブロック。', () => ({ pos: { B1: [50, 60], c: [100, 60], B2: [150, 60], d: [200, 60], B3: [240, 60] }, E: [['B1', 'c'], ['c', 'B2'], ['B2', 'd'], ['d', 'B3']], col: { B1: 'pink', B2: 'lemon', B3: 'mint' } })],
+  ['耳', 'Ear', 4, '内点の次数がすべて 2 の道。', () => ({ pos: { ...C(['a', 'b', 'c', 'd'], 34), p: [60, 20], q: [40, 70] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'a'], ['a', 'p'], ['p', 'q'], ['q', 'c']], hi: [['a', 'p'], ['p', 'q'], ['q', 'c']] })],
+  ['耳分解', 'Ear decomposition', 4, '閉路 $G_0$ と耳の列 $Q_1,\\dots,Q_m$。2-連結 ⟺ 耳分解をもつ。', () => ({ pos: C(ring(6)), E: [...ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), ['v0', 'v3']], hi: [['v0', 'v3']] })],
 ]
 
 export async function render(app) {
@@ -63,7 +72,7 @@ export async function render(app) {
   })
   grid.append(...cards)
   const apply = () => cards.forEach((c) => { const ok = (!filt || c._lec === filt) && (!q || c._txt.includes(q)); c.style.display = ok ? '' : 'none'; if (ok) { c.classList.add('in'); c._onin() } })
-  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
+  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
   const search = h('input.inp', { placeholder: '🔍 ことばを検索（例：次数、tree）', 'aria-label': '検索', style: { maxWidth: '360px' }, oninput: (e) => { q = e.target.value.trim().toLowerCase(); apply() } })
   app.append(h('section.section.wrap', { style: { paddingTop: '140px' } },
     h('div.sec-head', h('h2', kt('Word Garden.', '', 0, 40), h('span.jp.reveal', 'ことば図鑑 ・ ' + WORDS.length + ' 語')), h('p.reveal', '定義は試験で一番の武器。ミニ図とセットで覚えよう。カードにカーソルを乗せると頂点がはねます。')),
