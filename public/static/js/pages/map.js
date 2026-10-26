@@ -78,7 +78,7 @@ export async function render(app) {
     panel)
   app.append(wrap)
   // positions: initial by lecture band
-  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 170 + (lec - 1) * 265 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
+  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 250 + (lec - 1) * 250 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
   const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]))
   const links = L.map(([a, b]) => ({ a: idx[a], b: idx[b], el: s('line', { class: 'ml' }) }))
   links.forEach((l) => gL.append(l.el))
@@ -126,7 +126,7 @@ export async function render(app) {
       A.vx += dx * f; A.vy += dy * f; B.vx -= dx * f; B.vy -= dy * f
     }
     links.forEach(({ a, b }) => { const A = nodes[a], B = nodes[b]; const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) + .01; const f = (d - 95) * 0.02; A.vx += dx / d * f; A.vy += dy / d * f; B.vx -= dx / d * f; B.vy -= dy / d * f })
-    nodes.forEach((n) => { const tx = 170 + (n.lec - 1) * 265; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
+    nodes.forEach((n) => { const tx = 250 + (n.lec - 1) * 250; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
     nodes.forEach((n) => { if (n === drag) { n.vx = n.vy = 0; return } n.vx *= .78; n.vy *= .78; n.x += n.vx * temp; n.y += n.vy * temp; n.x = Math.max(40, Math.min(W - 40, n.x)); n.y = Math.max(50, Math.min(H - 50, n.y)) })
     temp = Math.max(.06, temp * .995)
     links.forEach((l) => { const A = nodes[l.a], B = nodes[l.b]; l.el.setAttribute('x1', A.x); l.el.setAttribute('y1', A.y); l.el.setAttribute('x2', B.x); l.el.setAttribute('y2', B.y) })

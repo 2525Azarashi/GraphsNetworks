@@ -260,7 +260,7 @@ export function labContract() {
 // LAB 5-4 : メンガーの定理の証明 ── 両側を縮約して “縫い合わせる”
 // =========================================================
 export function labStitch() {
-  const f = labFrame({ title: '証明のキモ：S の両側を別々に解いて、S で縫い合わせる', hint: '最小の $x$-$y$ 頂点切断 $S$（大きさ $k$）が $x$ 側・$y$ 側の両方に “中身” をもつとき：①$y$ 側を 1 点 $y\'$ に縮約したグラフで $x\to S$ の $k$ 本、②$x$ 側を $x\'$ に縮約したグラフで $S\to y$ の $k$ 本（帰納法の仮定）、③ $S$ の各点でつなげば $k$ 本の内素な $x$-$y$ 道！', color: 'peach', no: '5-4' })
+  const f = labFrame({ title: '証明のキモ：S の両側を別々に解いて、S で縫い合わせる', hint: '最小の $x$-$y$ 頂点切断 $S$（大きさ $k$）が $x$ 側・$y$ 側の両方に “中身” をもつとき：①$y$ 側を 1 点 $y\'$ に縮約したグラフで $x\\to S$ の $k$ 本、②$x$ 側を $x\'$ に縮約したグラフで $S\\to y$ の $k$ 本（帰納法の仮定）、③ $S$ の各点でつなげば $k$ 本の内素な $x$-$y$ 道！', color: 'peach', no: '5-4' })
   const pos = { x: [50, 190], a: [140, 90], b: [150, 290], c: [220, 190], s1: [300, 70], s2: [300, 190], s3: [300, 310], d: [390, 110], e: [400, 260], f: [470, 190], y: [550, 190] }
   const E = [['x', 'a'], ['x', 'b'], ['x', 'c'], ['a', 'c'], ['b', 'c'], ['a', 's1'], ['c', 's1'], ['c', 's2'], ['b', 's3'], ['c', 's3'], ['s1', 's2'], ['s1', 'd'], ['s2', 'd'], ['s2', 'f'], ['s2', 'e'], ['s3', 'e'], ['d', 'f'], ['e', 'f'], ['d', 'y'], ['f', 'y'], ['e', 'y']]
   const SX = ['a', 'b', 'c'], SY = ['d', 'e', 'f'], S = ['s1', 's2', 's3']
@@ -338,7 +338,7 @@ export const EX10 = {
   bends: [['x', 'c', 0, -34], ['x', 'g', -40, 0], ['c', 'y', 40, 0], ['d', 'f', 0, -36]],
 }
 export function labMengerAnswer() {
-  const f = labFrame({ title: '解答：内素な道 3 本 ＋ 頂点切断 3 個 ＝ 局所連結度 3', hint: '① 内素な道を 3 本見せて「κ ≥ 3」、② 3 頂点 $\{c, f, g\}$ を抜くと $x$ と $y$ が分かれることを見せて「κ ≤ 3」。頂点をタップすると、自分で選んだ $S$ で分離できるかも試せます。', color: 'sky', no: 'A5' })
+  const f = labFrame({ title: '解答：内素な道 3 本 ＋ 頂点切断 3 個 ＝ 局所連結度 3', hint: '① 内素な道を 3 本見せて「κ ≥ 3」、② 3 頂点 $\\{c, f, g\\}$ を抜くと $x$ と $y$ が分かれることを見せて「κ ≤ 3」。頂点をタップすると、自分で選んだ $S$ で分離できるかも試せます。', color: 'sky', no: 'A5' })
   const lbl = (v) => (v === 'hh' ? 'h' : v)
   const g = new GraphView(f.canvas, { w: W, h: H, draggable: false, bends: EX10.bends, nodes: toNodes(EX10.pos, Object.fromEntries(Object.keys(EX10.pos).map((k) => [k, { label: lbl(k) }]))), edges: EX10.E })
   const rd = readout('次数による見積もり'), rp = readout('内素な x-y 道'), rs = readout('x-y 頂点切断 S'), vd = verdict('', 'mid')
