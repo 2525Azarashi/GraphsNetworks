@@ -47,6 +47,12 @@ const WORDS = [
   ['ブロック木', 'Block tree', 4, 'ブロックと切断点を交互につないだ木 $B(G)$。葉は端ブロック。', () => ({ pos: { B1: [50, 60], c: [100, 60], B2: [150, 60], d: [200, 60], B3: [240, 60] }, E: [['B1', 'c'], ['c', 'B2'], ['B2', 'd'], ['d', 'B3']], col: { B1: 'pink', B2: 'lemon', B3: 'mint' } })],
   ['耳', 'Ear', 4, '内点の次数がすべて 2 の道。', () => ({ pos: { ...C(['a', 'b', 'c', 'd'], 34), p: [60, 20], q: [40, 70] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'a'], ['a', 'p'], ['p', 'q'], ['q', 'c']], hi: [['a', 'p'], ['p', 'q'], ['q', 'c']] })],
   ['耳分解', 'Ear decomposition', 4, '閉路 $G_0$ と耳の列 $Q_1,\\dots,Q_m$。2-連結 ⟺ 耳分解をもつ。', () => ({ pos: C(ring(6)), E: [...ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), ['v0', 'v3']], hi: [['v0', 'v3']] })],
+  ['x-y 頂点切断', 'x-y separating set', 5, '$G-S$ で $x$ と $y$ が別の成分になる $S\\subseteq V\\setminus\\{x,y\\}$。', () => ({ pos: { x: [40, 60], a: [110, 30], b: [110, 90], c: [170, 30], d: [170, 90], y: [230, 60] }, E: [['x', 'a'], ['x', 'b'], ['a', 'c'], ['b', 'd'], ['a', 'b'], ['c', 'y'], ['d', 'y']], col: { x: 'pink', y: 'mint', a: 'lemon', b: 'lemon' } })],
+  ['局所連結度', 'Local connectivity', 5, '$\\kappa_G(x,y)$：$x$-$y$ 頂点切断の大きさの最小値（$x,y$ は隣接しない）。', () => ({ pos: { x: [40, 60], a: [110, 30], b: [110, 90], c: [170, 30], d: [170, 90], y: [230, 60] }, E: [['x', 'a'], ['x', 'b'], ['a', 'c'], ['b', 'd'], ['c', 'y'], ['d', 'y']], tag: { x: 2 }, col: { x: 'pink', y: 'mint' } })],
+  ['内素な道', 'Internally disjoint paths', 5, '$x, y$ 以外に共通の頂点をもたない $x$-$y$ 道たち。', () => ({ pos: { x: [40, 60], a: [110, 25], b: [110, 60], c: [110, 95], y: [220, 60] }, E: [['x', 'a'], ['x', 'b'], ['x', 'c'], ['a', 'y'], ['b', 'y'], ['c', 'y']], hi: [['x', 'a'], ['a', 'y']], col: { x: 'pink', y: 'mint', a: 'pink', b: 'mint', c: 'sky' } })],
+  ['縮約', 'Contraction', 5, '$G/X$：$X$ を 1 頂点 $v_X$ にまとめる。中の辺は消え、重複は 1 本に。', () => ({ pos: { v: [130, 60], ...C(['a', 'b', 'c', 'd', 'e'], 46) }, E: [['v', 'a'], ['v', 'b'], ['v', 'c'], ['v', 'd'], ['a', 'b']], col: { v: 'mint' } })],
+  ['Menger の定理', "Menger's theorem", 5, '$\\kappa_G(x,y)$＝内素な $x$-$y$ 道の最大本数。', () => ({ pos: { x: [40, 60], a: [110, 25], b: [110, 95], y: [220, 60] }, E: [['x', 'a'], ['x', 'b'], ['a', 'y'], ['b', 'y']], col: { x: 'pink', y: 'mint', a: 'lemon', b: 'lemon' } })],
+  ['Whitney の定理', "Whitney's theorem", 5, '$k$-連結 ⟺ 任意の 2 頂点間に内素な道が $k$ 本。', () => ({ pos: { ...C(ring(4)), h: [130, 60] }, E: [...ring(4).map((v, i, a) => [v, a[(i + 1) % 4]]), ...ring(4).map((v) => [v, 'h'])] })],
 ]
 
 export async function render(app) {
@@ -72,7 +78,7 @@ export async function render(app) {
   })
   grid.append(...cards)
   const apply = () => cards.forEach((c) => { const ok = (!filt || c._lec === filt) && (!q || c._txt.includes(q)); c.style.display = ok ? '' : 'none'; if (ok) { c.classList.add('in'); c._onin() } })
-  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
+  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
   const search = h('input.inp', { placeholder: '🔍 ことばを検索（例：次数、tree）', 'aria-label': '検索', style: { maxWidth: '360px' }, oninput: (e) => { q = e.target.value.trim().toLowerCase(); apply() } })
   app.append(h('section.section.wrap', { style: { paddingTop: '140px' } },
     h('div.sec-head', h('h2', kt('Word Garden.', '', 0, 40), h('span.jp.reveal', 'ことば図鑑 ・ ' + WORDS.length + ' 語')), h('p.reveal', '定義は試験で一番の武器。ミニ図とセットで覚えよう。カードにカーソルを乗せると頂点がはねます。')),

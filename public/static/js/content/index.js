@@ -36,7 +36,16 @@ export const LECTURES = [
     keywords: ['連結度', '切断点', '頂点切断', 'ブロック', 'ブロック分解', '耳分解'],
     load: () => import('./lec4.js'),
   },
+  {
+    no: 5, slug: '5', color: 'peach', hex: '#FFB38A',
+    title: 'Menger の定理',
+    short: 'みちを数える・せつだんを数える',
+    lead: '2 点を切り離すのに必要な個数と、かぶらない道の最大本数。まったく違う 2 つの数が、いつもぴったり一致する。',
+    goals: ['局所連結度と内素な道の関係を理解する', 'Menger の定理の主張と証明の流れを理解する', '内素な道を用いて局所連結度・連結度が計算できる'],
+    keywords: ['局所連結度', 'x-y 頂点切断', '内素な道', '縮約', 'Menger の定理', 'Whitney の定理'],
+    load: () => import('./lec5.js'),
+  },
 ]
 export const UPCOMING = [
-  { no: 5, title: 'Coming soon', short: '次の講義プリントを待っています' },
+  { no: 6, title: 'Coming soon', short: '次の講義プリントを待っています' },
 ]

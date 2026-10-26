@@ -81,10 +81,11 @@ export class GraphView {
     const key = ek(a, b)
     if (this.edges.has(key)) return
     const g = s('g', { class: 'eg', 'data-k': key })
-    const line = s('line', { class: 'e' })
-    const hit = s('line', { class: 'e-hit' })
+    const bd = this._bend(a, b)
+    const line = s(bd ? 'path' : 'line', { class: 'e', fill: 'none' })
+    const hit = s(bd ? 'path' : 'line', { class: 'e-hit', fill: 'none' })
     g.append(line, hit)
-    const e = { a, b, key, el: g, line, hit }
+    const e = { a, b, key, el: g, line, hit, bend: bd }
     this.edges.set(key, e)
     this.gEdge.append(g)
     this._placeEdge(e)
@@ -133,9 +134,13 @@ export class GraphView {
   data() { return { nodes: [...this.nodes.values()].map(({ id, x, y, label, color }) => ({ id, x, y, label, color })), edges: this.edgeList() } }
 
   // ---------- visual state ----------
-  _len(e) { const A = this.nodes.get(e.a), B = this.nodes.get(e.b); return Math.hypot(A.x - B.x, A.y - B.y) }
+  // optional curved edges: opt.bends = [[a, b, dx, dy]] (control-point offset from the midpoint)
+  _bend(a, b) { for (const [p, q, dx, dy] of this.opt.bends || []) if ((p === a && q === b) || (p === b && q === a)) return [dx, dy]; return null }
+  _ctrl(e) { const A = this.nodes.get(e.a), B = this.nodes.get(e.b); return [(A.x + B.x) / 2 + e.bend[0] * 2, (A.y + B.y) / 2 + e.bend[1] * 2] }
+  _len(e) { const A = this.nodes.get(e.a), B = this.nodes.get(e.b); if (e.bend && e.line.getTotalLength) { try { return e.line.getTotalLength() || 1 } catch (_) {} } return Math.hypot(A.x - B.x, A.y - B.y) }
   _placeEdge(e) {
     const A = this.nodes.get(e.a), B = this.nodes.get(e.b)
+    if (e.bend) { const [cx, cy] = this._ctrl(e); const d = `M${A.x},${A.y} Q${cx},${cy} ${B.x},${B.y}`; e.line.setAttribute('d', d); e.hit.setAttribute('d', d); return }
     for (const l of [e.line, e.hit]) { l.setAttribute('x1', A.x); l.setAttribute('y1', A.y); l.setAttribute('x2', B.x); l.setAttribute('y2', B.y) }
   }
   _placeNode(n) { n.el.setAttribute('transform', `translate(${n.x},${n.y})`) }
@@ -184,6 +189,11 @@ export class GraphView {
     const A = this.nodes.get(a), B = this.nodes.get(b)
     const c = s('circle', { r: 7, fill: color, stroke: PAL.ink, 'stroke-width': 2.5 })
     this.gTop.append(c)
+    const e = this.edges.get(ek(a, b))
+    if (e && e.bend) {
+      const [cx, cy] = this._ctrl(e)
+      return tween(dur, (t) => { const u = 1 - t; c.setAttribute('cx', u * u * A.x + 2 * u * t * cx + t * t * B.x); c.setAttribute('cy', u * u * A.y + 2 * u * t * cy + t * t * B.y) }).then(() => c.remove())
+    }
     return tween(dur, (t) => { c.setAttribute('cx', A.x + (B.x - A.x) * t); c.setAttribute('cy', A.y + (B.y - A.y) * t) }).then(() => c.remove())
   }
   // soft blob behind a set of vertices
