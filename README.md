@@ -19,3 +19,10 @@
 
 ## 未実装・次の一手
 - 第6回以降のプリント追加、定理3.7の演習課題（プリント本体待ち）、本番デプロイ
+
+## Vercel へのデプロイ
+- リポジトリをそのまま Vercel にインポートするだけで動きます（`vercel.json` 同梱）。
+- Framework Preset：**Other**（自動検出のままで OK）／ Root Directory：リポジトリ直下
+- Build：`node scripts/build-static.mjs` → 出力 `out/`（依存パッケージのインストール不要・Node 18+）
+- `/lec/*`, `/map`, `/words` は `index.html` にリライト（クライアント側ルーター）。
+- Cloudflare Pages 版（Hono）は従来どおり `npm run build` → `dist/`。HTML の中身は `src/shell.js` を共有。

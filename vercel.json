@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo 'no install needed'",
+  "buildCommand": "node scripts/build-static.mjs",
+  "outputDirectory": "out",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/lec/:path*", "destination": "/index.html" },
+    { "source": "/map", "destination": "/index.html" },
+    { "source": "/words", "destination": "/index.html" }
+  ],
+  "headers": [
+    { "source": "/static/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] }
+  ]
+}
