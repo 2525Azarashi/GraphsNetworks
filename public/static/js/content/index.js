@@ -45,7 +45,16 @@ export const LECTURES = [
     keywords: ['局所連結度', 'x-y 頂点切断', '内素な道', '縮約', 'Menger の定理', 'Whitney の定理'],
     load: () => import('./lec5.js'),
   },
+  {
+    no: 6, slug: '6', color: 'lemon', hex: '#FFD66B',
+    title: 'オイラー周遊',
+    short: 'いっぴつがき・はしをわたる',
+    lead: '同じ線を 2 回なぞらずに、全部の線を描けるか？ 答えは “奇点の数” だけで決まる。そして描き方は、輪っかを差し込んで育てればいい。',
+    goals: ['これまで考えていたグラフと多重グラフの違いを理解する', 'オイラー周遊・準オイラー周遊の存在性に関する必要十分条件を理解する', 'Hierholzer のアルゴリズムに従ってオイラー周遊を構成できる'],
+    keywords: ['多重グラフ', 'ループ', '小径', 'オイラー周遊', '準オイラー周遊', 'Hierholzer'],
+    load: () => import('./lec6.js'),
+  },
 ]
 export const UPCOMING = [
-  { no: 6, title: 'Coming soon', short: '次の講義プリントを待っています' },
+  { no: 7, title: 'Coming soon', short: '次の講義プリントを待っています' },
 ]

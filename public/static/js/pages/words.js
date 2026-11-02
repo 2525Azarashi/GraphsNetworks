@@ -53,6 +53,12 @@ const WORDS = [
   ['縮約', 'Contraction', 5, '$G/X$：$X$ を 1 頂点 $v_X$ にまとめる。中の辺は消え、重複は 1 本に。', () => ({ pos: { v: [130, 60], ...C(['a', 'b', 'c', 'd', 'e'], 46) }, E: [['v', 'a'], ['v', 'b'], ['v', 'c'], ['v', 'd'], ['a', 'b']], col: { v: 'mint' } })],
   ['Menger の定理', "Menger's theorem", 5, '$\\kappa_G(x,y)$＝内素な $x$-$y$ 道の最大本数。', () => ({ pos: { x: [40, 60], a: [110, 25], b: [110, 95], y: [220, 60] }, E: [['x', 'a'], ['x', 'b'], ['a', 'y'], ['b', 'y']], col: { x: 'pink', y: 'mint', a: 'lemon', b: 'lemon' } })],
   ['Whitney の定理', "Whitney's theorem", 5, '$k$-連結 ⟺ 任意の 2 頂点間に内素な道が $k$ 本。', () => ({ pos: { ...C(ring(4)), h: [130, 60] }, E: [...ring(4).map((v, i, a) => [v, a[(i + 1) % 4]]), ...ring(4).map((v) => [v, 'h'])] })],
+  ['多重グラフ', 'Multigraph', 6, '$G=(V,E,\\varphi)$。多重辺・ループを許す。$\\varphi$ は接続関数。', () => ({ pos: { a: [80, 30], b: [80, 95], c: [190, 60] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c']], col: { a: 'lemon', b: 'lemon' } })],
+  ['ループ', 'Loop', 6, '両端が同じ頂点の辺。次数に 2 を寄与する。', () => ({ pos: { a: [130, 70] }, E: [], tag: { a: 2 } })],
+  ['小径・閉小径', 'Trail / Closed trail', 6, '辺が重複しない歩道（頂点の重複は OK）。閉じたものが閉小径。', () => ({ pos: C(['a', 'b', 'c', 'd']), E: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'a'], ['a', 'c']], hi: [['a', 'b'], ['b', 'c'], ['c', 'a']] })],
+  ['オイラー周遊', 'Euler tour', 6, '全辺をちょうど 1 回ずつ通る閉小径。連結なら ⟺ 全頂点が偶点。', () => ({ pos: { ...C(ring(4)), h: [130, 60] }, E: [...ring(4).map((v, i, a) => [v, a[(i + 1) % 4]]), ['v0', 'h'], ['v2', 'h']], hi: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'h'], ['h', 'v0']] })],
+  ['準オイラー周遊', 'Euler trail', 6, '全辺を通り端点が異なる小径。連結なら ⟺ 奇点ちょうど 2 個。', () => ({ pos: { a: [60, 60], b: [130, 25], c: [130, 95], d: [200, 60] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['b', 'd'], ['c', 'd']], col: { b: 'pink', c: 'pink' } })],
+  ['Hierholzer のアルゴリズム', "Hierholzer's algorithm", 6, '閉小径を作り、未使用辺に触れる点で別の閉小径を差し込む。$O(|E|)$。', () => ({ pos: { a: [60, 30], b: [60, 95], c: [130, 60], d: [200, 30], e: [200, 95] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['c', 'e'], ['d', 'e']], hi: [['c', 'd'], ['d', 'e'], ['e', 'c']] })],
 ]
 
 export async function render(app) {
@@ -78,7 +84,7 @@ export async function render(app) {
   })
   grid.append(...cards)
   const apply = () => cards.forEach((c) => { const ok = (!filt || c._lec === filt) && (!q || c._txt.includes(q)); c.style.display = ok ? '' : 'none'; if (ok) { c.classList.add('in'); c._onin() } })
-  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
+  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回', '第6回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
   const search = h('input.inp', { placeholder: '🔍 ことばを検索（例：次数、tree）', 'aria-label': '検索', style: { maxWidth: '360px' }, oninput: (e) => { q = e.target.value.trim().toLowerCase(); apply() } })
   app.append(h('section.section.wrap', { style: { paddingTop: '140px' } },
     h('div.sec-head', h('h2', kt('Word Garden.', '', 0, 40), h('span.jp.reveal', 'ことば図鑑 ・ ' + WORDS.length + ' 語')), h('p.reveal', '定義は試験で一番の武器。ミニ図とセットで覚えよう。カードにカーソルを乗せると頂点がはねます。')),

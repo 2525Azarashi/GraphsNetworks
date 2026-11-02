@@ -51,6 +51,14 @@ const N = [
   ['def-con', '縮約', 5, 'def', '$G/X$：$X$ を 1 頂点にまとめる。'],
   ['t52', 'Menger 5.2', 5, 'thm', '$\\kappa_G(x,y)$＝内素な $x$-$y$ 道の最大本数。'],
   ['t53', 'Whitney 5.3', 5, 'thm', '$k$-連結 ⟺ 任意の 2 頂点間に内素な道 $k$ 本。'],
+  ['def-multi', '多重グラフ', 6, 'def', '$G=(V,E,\\varphi)$：多重辺・ループを許す。ループは次数 2。'],
+  ['def-trail', '小径・閉小径', 6, 'def', '辺が重複しない（閉）歩道。'],
+  ['def-euler', 'オイラー周遊', 6, 'def', '全辺を使う閉小径。準オイラー周遊は端点が異なる。'],
+  ['t61', '定理 6.1', 6, 'thm', '連結：オイラー周遊あり ⟺ 全頂点が偶点。'],
+  ['c611', '系 6.1.1', 6, 'thm', '連結：準オイラー周遊あり ⟺ 奇点ちょうど 2 個。'],
+  ['t62', '定理 6.2', 6, 'thm', '全頂点が偶点なら、延ばせるだけ延ばした小径は出発点で止まる。'],
+  ['a61', 'Hierholzer 6.1', 6, 'thm', '閉小径を差し込んでオイラー周遊を構成。'],
+  ['t63', '定理 6.3/6.4', 6, 'thm', 'アルゴリズム 6.1 は正しく、$O(|E|)$ 時間。'],
 ]
 const L = [
   ['def-g', 'def-iso'], ['def-g', 'def-deg'], ['def-deg', 't11'], ['t11', 'c111'], ['c111', 'c112'], ['c112', 't12'], ['def-deg', 'def-seq'], ['def-iso', 'def-seq'], ['t11', 't13'], ['def-seq', 't13'], ['t13', 'a11'],
@@ -62,8 +70,10 @@ const L = [
   ['p45', 't46'], ['t41', 't46'], ['t23', 't46'],
   ['def-vcut', 'def-lk'], ['def-kappa', 'def-lk'], ['def-path', 'def-id'], ['def-lk', 'p51'], ['def-id', 'p51'], ['def-sub', 'def-con'],
   ['p51', 't52'], ['def-con', 't52'], ['t52', 't53'], ['def-kappa', 't53'],
+  ['def-g', 'def-multi'], ['def-walk', 'def-trail'], ['def-multi', 'def-trail'], ['def-trail', 'def-euler'], ['def-euler', 't61'], ['c111', 't61'], ['def-conn', 't61'],
+  ['t61', 'c611'], ['c111', 'c611'], ['def-trail', 't62'], ['t62', 'a61'], ['a61', 't63'], ['t63', 't61'],
 ]
-const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach }
+const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach, 6: PAL.lemon }
 
 export async function render(app) {
   document.title = '定理マップ — てん と せん'
@@ -74,11 +84,11 @@ export async function render(app) {
   const wrap = h('div.map-wrap', svg,
     h('div.map-legend', h('div.eyebrow', 'Theorem Map'), h('div.ttl', kt('授業そのものが、', '', 200, 50), h('br'), kt('ひとつのグラフ。', '', 600, 50)),
       h('p', '定義（点線）→ 定理（実線）の依存関係。ノードをタップすると内容と “つながり” が光ります。ドラッグもできます。'),
-      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
+      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5, 6].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
     panel)
   app.append(wrap)
   // positions: initial by lecture band
-  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 250 + (lec - 1) * 250 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
+  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 240 + (lec - 1) * 200 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
   const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]))
   const links = L.map(([a, b]) => ({ a: idx[a], b: idx[b], el: s('line', { class: 'ml' }) }))
   links.forEach((l) => gL.append(l.el))
@@ -126,7 +136,7 @@ export async function render(app) {
       A.vx += dx * f; A.vy += dy * f; B.vx -= dx * f; B.vy -= dy * f
     }
     links.forEach(({ a, b }) => { const A = nodes[a], B = nodes[b]; const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) + .01; const f = (d - 95) * 0.02; A.vx += dx / d * f; A.vy += dy / d * f; B.vx -= dx / d * f; B.vy -= dy / d * f })
-    nodes.forEach((n) => { const tx = 250 + (n.lec - 1) * 250; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
+    nodes.forEach((n) => { const tx = 240 + (n.lec - 1) * 200; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
     nodes.forEach((n) => { if (n === drag) { n.vx = n.vy = 0; return } n.vx *= .78; n.vy *= .78; n.x += n.vx * temp; n.y += n.vy * temp; n.x = Math.max(40, Math.min(W - 40, n.x)); n.y = Math.max(50, Math.min(H - 50, n.y)) })
     temp = Math.max(.06, temp * .995)
     links.forEach((l) => { const A = nodes[l.a], B = nodes[l.b]; l.el.setAttribute('x1', A.x); l.el.setAttribute('y1', A.y); l.el.setAttribute('x2', B.x); l.el.setAttribute('y2', B.y) })
