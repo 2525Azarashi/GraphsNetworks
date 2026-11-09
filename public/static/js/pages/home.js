@@ -91,8 +91,20 @@ function cardArt(L) {
   else if (L.no === 5) { data = { nodes: toNodes({ x: [150, 110], a: [230, 45], b: [230, 110], c: [230, 175], d: [310, 45], e: [310, 110], f: [310, 175], y: [390, 110] }, { x: { color: 'pink' }, y: { color: 'mint' }, a: { color: 'peach' }, d: { color: 'peach' }, b: { color: 'lemon' }, e: { color: 'lemon' }, c: { color: 'sky' }, f: { color: 'sky' } }), edges: [['x', 'a'], ['a', 'd'], ['d', 'y'], ['x', 'b'], ['b', 'e'], ['e', 'y'], ['x', 'c'], ['c', 'f'], ['f', 'y']] } }
   else if (L.no === 4) { const ids = ['a', 'b', 'c', 'd', 'e', 'f']; data = { nodes: toNodes({ a: [150, 60], b: [150, 160], c: [220, 110], d: [290, 110], e: [350, 50], f: [350, 170] }, { a: { color: 'lav' }, b: { color: 'lav' }, c: { color: 'pink' }, d: { color: 'pink' }, e: { color: 'mint' }, f: { color: 'mint' } }), edges: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['d', 'f'], ['e', 'f']] } }
   else if (L.no === 3) { data = { nodes: toNodes({ r: [250, 40], a: [190, 95], b: [310, 95], c: [150, 160], d: [225, 165], e: [290, 165], f: [350, 160] }, { r: { color: 'lemon' }, c: { color: 'mint' }, d: { color: 'mint' }, e: { color: 'mint' }, f: { color: 'mint' }, a: { color: 'sky' }, b: { color: 'sky' } }), edges: [['r', 'a'], ['r', 'b'], ['a', 'c'], ['a', 'd'], ['b', 'e'], ['b', 'f']] } }
+  else if (L.no === 7) {
+    const pos = {}, E = []
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) pos[`${i}${j}`] = [78 + j * 68, 42 + i * 64]
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) {
+      if (j < 3) E.push([`${i}${j}`, `${i}${j + 1}`])
+      if (i < 2) E.push([`${i}${j}`, `${i + 1}${j}`])
+    }
+    const cyc = ['00', '10', '20', '21', '11', '12', '22', '23', '13', '03', '02', '01']
+    data = { nodes: toNodes(pos, Object.fromEntries(Object.keys(pos).map((id) => [id, { color: cyc.includes(id) ? 'aqua' : 'white' }]))), edges: E }
+    data.hi = cyc.map((v, k) => [v, cyc[(k + 1) % cyc.length]])
+  }
   else data = { nodes: [], edges: [] }
   g.load(data, false)
+  if (data.hi) data.hi.forEach(([a, b]) => g.edgeClass(a, b, 'hi3'))
   host.append(h('span.lc-no', String(L.no).padStart(2, '0')))
   host._g = g
   return host
@@ -118,12 +130,12 @@ export async function render(app) {
   kill.push(heroGraph(stage))
 
   // ---------- marquee ----------
-  const words = ['頂点 Vertex', '辺 Edge', '次数 Degree', '同型 Isomorphism', '握手補題', '部分グラフ', '補グラフ', '完全グラフ Kₙ', '閉路 Cₙ', '2部グラフ', '連結 Connected', '距離 Distance', '木 Tree', '全域木', '連結度 κ(G)', 'ブロック Block', '耳分解 Ear', '内素な道', 'Menger の定理', '縮約 G/X', '多重グラフ', 'オイラー周遊 Euler', '一筆書き', 'Hierholzer']
+  const words = ['頂点 Vertex', '辺 Edge', '次数 Degree', '同型 Isomorphism', '握手補題', '部分グラフ', '補グラフ', '完全グラフ Kₙ', '閉路 Cₙ', '2部グラフ', '連結 Connected', '距離 Distance', '木 Tree', '全域木', '連結度 κ(G)', 'ブロック Block', '耳分解 Ear', '内素な道', 'Menger の定理', '縮約 G/X', '多重グラフ', 'オイラー周遊 Euler', '一筆書き', 'Hierholzer', 'ハミルトン閉路 Hamilton', 'ハミルトン道', 'Dirac の定理', 'Ore の定理', '閉包 Closure', '巡回セールスマン問題 TSP']
   const mq = (alt) => h('div.marquee' + (alt ? '.alt' : ''), { 'aria-hidden': 'true' }, h('div.marquee-track', [...words, ...words].map((w) => h('span', w))))
   app.append(mq(false), mq(true))
 
   // ---------- STATS ----------
-  const nLabs = 38, nThm = 37
+  const nLabs = 43, nThm = 45
   const stat = (v, label, art) => { const b = h('b', '0'); b.dataset.to = v; return h('div.stat.pop', html(art), b, h('span', label)) }
   const stats = h('section.section.wrap#stats-section', { style: { paddingBottom: '40px' } },
     h('div.sec-head', h('h2', kt('Learn by touching.', '', 0, 30), h('span.jp.reveal', '読む前に、さわって分かる')), h('p.reveal', 'すべての定義と定理に、ドラッグ・タップで動かせる「ラボ」がついています。手を動かして “なるほど” を作ろう。')),
@@ -131,7 +143,7 @@ export async function render(app) {
       stat(LECTURES.length, '収録済みの講義回', '<svg viewBox="0 0 90 90"><circle cx="58" cy="32" r="22" fill="#FFE0EA" stroke="#2B2A4C" stroke-width="3"/></svg>'),
       stat(nLabs, 'さわれるラボ', '<svg viewBox="0 0 90 90"><line x1="30" y1="60" x2="62" y2="26" stroke="#2B2A4C" stroke-width="3"/><circle cx="30" cy="60" r="10" fill="#D9F6EE" stroke="#2B2A4C" stroke-width="3"/><circle cx="62" cy="26" r="10" fill="#FFF3CC" stroke="#2B2A4C" stroke-width="3"/></svg>'),
       stat(nThm, '定理・命題・系', '<svg viewBox="0 0 90 90"><rect x="38" y="12" width="40" height="40" rx="10" fill="#ECE6FF" stroke="#2B2A4C" stroke-width="3"/></svg>'),
-      stat(36, '類題クイズ', '<svg viewBox="0 0 90 90"><circle cx="58" cy="32" r="22" fill="#E1F0FF" stroke="#2B2A4C" stroke-width="3"/><text x="58" y="41" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="24" fill="#2B2A4C">?</text></svg>')))
+      stat(44, '類題クイズ', '<svg viewBox="0 0 90 90"><circle cx="58" cy="32" r="22" fill="#E1F0FF" stroke="#2B2A4C" stroke-width="3"/><text x="58" y="41" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="24" fill="#2B2A4C">?</text></svg>')))
   app.append(stats)
   stats.querySelectorAll('.stat').forEach((st) => { st._onin = () => { const b = st.querySelector('b'); const to = +b.dataset.to; tween(1200, (t) => (b.textContent = Math.round(to * t))) } ; st.setAttribute('data-onin', '') })
 

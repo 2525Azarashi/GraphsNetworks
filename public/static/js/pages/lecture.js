@@ -4,15 +4,27 @@ import { GraphView, circle, toNodes, PCYCLE } from '../lib/graph.js'
 
 function heroArt(L, host) {
   const g = new GraphView(host, { w: 480, h: 400, r: 18, labels: false })
-  let pos, E
+  let pos, E, hi = null
   if (L.no === 1) { const ids = 'abcdefg'.split(''); pos = { ...circle(ids.slice(0, 6), 240, 200, 130), g: [240, 200] }; E = [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['e', 'f'], ['f', 'a'], ['g', 'a'], ['g', 'c'], ['g', 'e'], ['b', 'g']] }
   else if (L.no === 2) { const o = ['o0', 'o1', 'o2', 'o3', 'o4'], i = ['i0', 'i1', 'i2', 'i3', 'i4']; pos = { ...circle(o, 240, 205, 150), ...circle(i, 240, 205, 66) }; E = [...o.map((x, k) => [x, o[(k + 1) % 5]]), ...o.map((x, k) => [x, i[k]]), ...i.map((x, k) => [x, i[(k + 2) % 5]])] }
   else if (L.no === 4) { pos = { a: [70, 120], b: [70, 280], c: [160, 200], d: [260, 200], e: [330, 100], f: [330, 300], g: [420, 200], hh: [410, 60], ii: [450, 340] }; E = [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['d', 'e'], ['d', 'f'], ['e', 'g'], ['f', 'g'], ['e', 'f'], ['e', 'hh'], ['g', 'ii'], ['f', 'ii']] }
   else if (L.no === 6) { pos = { N: [240, 50], A: [120, 200], D: [380, 200], S: [240, 350], m1: [175, 120], m2: [175, 280], m3: [310, 125], m4: [310, 275] }; E = [['N', 'm1'], ['m1', 'A'], ['A', 'm2'], ['m2', 'S'], ['S', 'm4'], ['m4', 'D'], ['D', 'm3'], ['m3', 'N'], ['A', 'D'], ['N', 'A'], ['A', 'S']] }
   else if (L.no === 5) { pos = { x: [50, 200], a: [150, 80], b: [150, 200], c: [150, 320], s1: [250, 100], s2: [250, 200], s3: [250, 300], d: [350, 80], e: [350, 200], f: [350, 320], y: [440, 200] }; E = [['x', 'a'], ['x', 'b'], ['x', 'c'], ['a', 's1'], ['b', 's2'], ['c', 's3'], ['s1', 'd'], ['s2', 'e'], ['s3', 'f'], ['d', 'y'], ['e', 'y'], ['f', 'y'], ['a', 'b'], ['s2', 's3'], ['d', 'e']] }
+  else if (L.no === 7) {
+    // 3x4 grid with its Hamilton cycle traced (the lecture's lead example)
+    pos = {}; E = []
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) pos[`${i}${j}`] = [75 + j * 110, 110 + i * 90]
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 4; j++) {
+      if (j < 3) E.push([`${i}${j}`, `${i}${j + 1}`])
+      if (i < 2) E.push([`${i}${j}`, `${i + 1}${j}`])
+    }
+    const cyc = ['00', '10', '20', '21', '11', '12', '22', '23', '13', '03', '02', '01']
+    hi = cyc.map((v, k) => [v, cyc[(k + 1) % cyc.length]])
+  }
   else { pos = { r: [240, 60], a: [140, 150], b: [340, 150], c: [80, 260], d: [190, 270], e: [300, 270], f: [400, 260], g: [240, 350], h: [440, 350] }; E = [['r', 'a'], ['r', 'b'], ['a', 'c'], ['a', 'd'], ['b', 'e'], ['b', 'f'], ['e', 'g'], ['f', 'h']] }
   const ids = Object.keys(pos)
-  g.load({ nodes: toNodes(pos, Object.fromEntries(ids.map((id, k) => [id, { color: PCYCLE[k % 6] }]))), edges: E })
+  g.load({ nodes: toNodes(pos, Object.fromEntries(ids.map((id, k) => [id, hi ? { color: 'aqua' } : { color: PCYCLE[k % 6] }]))), edges: E })
+  if (hi) hi.forEach(([a, b]) => g.edgeClass(a, b, 'hi3'))
   // gentle idle wobble
   let alive = true, t0 = performance.now()
   const base = Object.fromEntries(ids.map((id) => [id, pos[id].slice()]))
