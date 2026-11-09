@@ -1,7 +1,7 @@
 import { h, html, tex } from './ui.js'
 import { GraphView } from './graph.js'
 
-const CL = { pink: 'var(--pink-l)', mint: 'var(--mint-l)', lemon: 'var(--lemon-l)', lav: 'var(--lav-l)', sky: 'var(--sky-l)' }
+const CL = { pink: 'var(--pink-l)', mint: 'var(--mint-l)', lemon: 'var(--lemon-l)', lav: 'var(--lav-l)', sky: 'var(--sky-l)', peach: 'var(--peach-l)', aqua: 'var(--aqua-l)' }
 
 export function labFrame({ title, hint, color = 'lav', one = false, no = '' }) {
   const canvas = h('div.lab-canvas')

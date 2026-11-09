@@ -15,7 +15,8 @@
   --lemon:#FFD66B; --lemon-d:#F5B82E; --lemon-l:#FFF3CC;
   --lav:#B9A6FF;   --lav-d:#8C72F2;  --lav-l:#ECE6FF;
   --sky:#8EC9FF;   --sky-d:#4FA3F0;  --sky-l:#E1F0FF;
-  --peach:#FFB38A;
+  --peach:#FFB38A;  --peach-d:#F08A55;  --peach-l:#FFE4D6;
+  --aqua:#7FE0E0;   --aqua-d:#2BB8B8;   --aqua-l:#DAF8F8;
   --r-sm:12px; --r:20px; --r-lg:32px;
   --shadow:0 4px 0 var(--ink);
   --shadow-lg:0 8px 0 var(--ink);
@@ -127,7 +128,7 @@ body.cursor-hot #cursor-head{r:15px;fill:var(--lemon)}
 }
 .btn:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
-.btn.pk{background:var(--pink)} .btn.mt{background:var(--mint)} .btn.lm{background:var(--lemon)} .btn.lv{background:var(--lav)} .btn.sk{background:var(--sky)}
+.btn.pk{background:var(--pink)} .btn.mt{background:var(--mint)} .btn.lm{background:var(--lemon)} .btn.lv{background:var(--lav)} .btn.sk{background:var(--sky)} .btn.aq{background:var(--aqua)} .btn.pc{background:var(--peach)}
 .btn.ink{background:var(--ink);color:var(--paper)}
 .btn.sm{padding:6px 14px;font-size:13px}
 .btn[disabled]{opacity:.45;pointer-events:none}
@@ -488,3 +489,4 @@ svg.gv .river{pointer-events:none}
 .phi-tbl{grid-template-columns:repeat(2,1fr)!important}
 .phi-tbl span{cursor:pointer;font-size:12px}
 svg.gv .v:focus{outline:none}svg.gv .v:focus-visible .ring{opacity:1}
+v:focus-visible .ring{opacity:1}

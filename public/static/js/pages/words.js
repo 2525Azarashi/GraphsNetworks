@@ -59,6 +59,16 @@ const WORDS = [
   ['オイラー周遊', 'Euler tour', 6, '全辺をちょうど 1 回ずつ通る閉小径。連結なら ⟺ 全頂点が偶点。', () => ({ pos: { ...C(ring(4)), h: [130, 60] }, E: [...ring(4).map((v, i, a) => [v, a[(i + 1) % 4]]), ['v0', 'h'], ['v2', 'h']], hi: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'h'], ['h', 'v0']] })],
   ['準オイラー周遊', 'Euler trail', 6, '全辺を通り端点が異なる小径。連結なら ⟺ 奇点ちょうど 2 個。', () => ({ pos: { a: [60, 60], b: [130, 25], c: [130, 95], d: [200, 60] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['b', 'd'], ['c', 'd']], col: { b: 'pink', c: 'pink' } })],
   ['Hierholzer のアルゴリズム', "Hierholzer's algorithm", 6, '閉小径を作り、未使用辺に触れる点で別の閉小径を差し込む。$O(|E|)$。', () => ({ pos: { a: [60, 30], b: [60, 95], c: [130, 60], d: [200, 30], e: [200, 95] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['c', 'e'], ['d', 'e']], hi: [['c', 'd'], ['d', 'e'], ['e', 'c']] })],
+  ['ハミルトン道', 'Hamilton path', 7, 'すべての頂点をちょうど 1 回ずつ通る道。長さは $n-1$。', () => ({ pos: Object.fromEntries(ring(5).map((v, i) => [v, [40 + i * 45, 60 + (i % 2 ? -16 : 16)]])), E: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'v3'], ['v3', 'v4']], hi: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'v3'], ['v3', 'v4']] })],
+  ['ハミルトン閉路', 'Hamilton cycle', 7, 'すべての頂点をちょうど 1 回ずつ通る閉路。長さは $n$。', () => ({ pos: C(ring(6)), E: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), hi: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]) })],
+  ['ハミルトングラフ', 'Hamiltonian graph', 7, 'ハミルトン閉路をもつグラフ。$C_n$ を部分グラフにもつことと同じ。', () => ({ pos: C(ring(6)), E: [...ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), ['v0', 'v3']], hi: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]) })],
+  ['成分数 c(G)', 'Number of components', 7, '連結成分の個数。$c(G)=1$ が連結。$c(G-S)$ は $S$ を抜いた後の成分数。', () => ({ pos: { a: [50, 30], b: [90, 100], c: [140, 45], x: [210, 30], y: [240, 90], z: [110, 100] }, E: [['a', 'b'], ['b', 'c'], ['a', 'c'], ['x', 'y'], ['z', 'b']], col: { a: 'pink', b: 'pink', c: 'pink', x: 'mint', y: 'mint' } })],
+  ['必要条件（切り口）', 'Necessary condition', 7, 'ハミルトングラフなら、空でない任意の $S$ で $c(G-S)\\le|S|$（定理 7.1）。対偶で「無い」を示す。', () => ({ pos: { s1: [130, 20], s2: [130, 100], l1: [50, 20], l2: [50, 60], l3: [50, 100], r1: [210, 20], r2: [210, 60], r3: [210, 100] }, E: [['s1', 's2'], ['l1', 's1'], ['l2', 's1'], ['l3', 's2'], ['r1', 's1'], ['r2', 's2'], ['r3', 's2']], col: { s1: 'pink', s2: 'pink' } })],
+  ['Dirac の定理', "Dirac's theorem", 7, '$n\\ge3$ の単純グラフで $\\delta(G)\\ge n/2$ ならハミルトングラフ。', () => { const ids = ring(6); const E = []; ids.forEach((a, i) => ids.slice(i + 1).forEach((b) => E.push([a, b]))); return { pos: C(ids), E, tag: { v0: 5 }, col: { v0: 'pink' } } }],
+  ['Ore の定理', "Ore's theorem", 7, '隣接しない任意の $x,y$ で $\\deg x+\\deg y\\ge n$ ならハミルトングラフ。Dirac を含む。', () => ({ pos: { x: [60, 60], y: [190, 60], a: [125, 8], b: [125, 42], c: [125, 78], d: [125, 112] }, E: [['x', 'a'], ['x', 'b'], ['x', 'c'], ['x', 'd'], ['y', 'a'], ['y', 'b'], ['y', 'c'], ['y', 'd']], col: { x: 'pink', y: 'mint' }, tag: { x: 4, y: 4 } })],
+  ['閉包', 'Closure cl(G)', 7, '非隣接で次数和 $\\ge n$ の 2 頂点に辺を足し続けた極大グラフ。$\\mathrm{cl}(G)=K_n$ ならハミルトン。', () => { const ids = ring(6); const E = []; ids.forEach((a, i) => ids.slice(i + 1).forEach((b) => { if (![['v0', 'v3'], ['v1', 'v4'], ['v2', 'v5']].some(([u, w]) => (u === a && w === b) || (u === b && w === a))) E.push([a, b]) })); return { pos: C(ids), E, col: { v0: 'pink', v3: 'pink' }, tag: { v0: 4, v3: 4 } } }],
+  ['巡回セールスマン問題', 'Traveling salesman problem', 7, '最短のハミルトン閉路を求める問題。判定版は NP 完全（定理 7.6）。', () => ({ pos: { ...C(ring(6)), h: [130, 60] }, E: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), hi: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), col: { v0: 'lemon' } })],
+  ['2-opt', '2-opt', 7, '閉路の 2 辺を交差解消に入れ替えて短くする改善法。近傍解の局所探索。', () => ({ pos: { a: [40, 30], b: [180, 110], c: [220, 30], d: [80, 110] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'a']], hi: [['a', 'b'], ['c', 'd']] })],
 ]
 
 export async function render(app) {
@@ -84,7 +94,7 @@ export async function render(app) {
   })
   grid.append(...cards)
   const apply = () => cards.forEach((c) => { const ok = (!filt || c._lec === filt) && (!q || c._txt.includes(q)); c.style.display = ok ? '' : 'none'; if (ok) { c.classList.add('in'); c._onin() } })
-  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回', '第6回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
+  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回', '第6回', '第7回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
   const search = h('input.inp', { placeholder: '🔍 ことばを検索（例：次数、tree）', 'aria-label': '検索', style: { maxWidth: '360px' }, oninput: (e) => { q = e.target.value.trim().toLowerCase(); apply() } })
   app.append(h('section.section.wrap', { style: { paddingTop: '140px' } },
     h('div.sec-head', h('h2', kt('Word Garden.', '', 0, 40), h('span.jp.reveal', 'ことば図鑑 ・ ' + WORDS.length + ' 語')), h('p.reveal', '定義は試験で一番の武器。ミニ図とセットで覚えよう。カードにカーソルを乗せると頂点がはねます。')),
