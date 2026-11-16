@@ -59,6 +59,12 @@ const N = [
   ['t62', '定理 6.2', 6, 'thm', '全頂点が偶点なら、延ばせるだけ延ばした小径は出発点で止まる。'],
   ['a61', 'Hierholzer 6.1', 6, 'thm', '閉小径を差し込んでオイラー周遊を構成。'],
   ['t63', '定理 6.3/6.4', 6, 'thm', 'アルゴリズム 6.1 は正しく、$O(|E|)$ 時間。'],
+  ['def-match', 'マッチング', 9, 'def', '互いに端点を共有しない辺部分集合 $M\\subseteq E(G)$。$(V(M),M)$ は 1-正則。'],
+  ['def-maxm', '極大・最大・完全', 9, 'def', '完全 ⟹ 最大（$|M|=\\alpha\'(G)$）⟹ 極大。逆は偽。'],
+  ['def-aug', '交互道・増大道', 9, 'def', '$M$ と $E\\setminus M$ を交互に通る道。両端が $V(M)$ 外なら $M$-増大道。'],
+  ['t91', 'Berge 9.1', 9, 'thm', '$M$ が最大マッチング ⟺ $G$ は $M$-増大道を持たない。'],
+  ['t92', '結婚定理 9.2', 9, 'thm', '2 部グラフ $G(X,Y)$ が $X$ 被覆マッチングを持つ ⟺ $\\forall U\\subseteq X,\\ |N_G(U)|\\ge|U|$。'],
+  ['c921', '系 9.2.1', 9, 'thm', '$G(X,Y)$ が完全マッチングを持つ ⟺ $|X|=|Y|$ かつ Hall の条件。'],
 ]
 const L = [
   ['def-g', 'def-iso'], ['def-g', 'def-deg'], ['def-deg', 't11'], ['t11', 'c111'], ['c111', 'c112'], ['c112', 't12'], ['def-deg', 'def-seq'], ['def-iso', 'def-seq'], ['t11', 't13'], ['def-seq', 't13'], ['t13', 'a11'],
@@ -72,23 +78,27 @@ const L = [
   ['p51', 't52'], ['def-con', 't52'], ['t52', 't53'], ['def-kappa', 't53'],
   ['def-g', 'def-multi'], ['def-walk', 'def-trail'], ['def-multi', 'def-trail'], ['def-trail', 'def-euler'], ['def-euler', 't61'], ['c111', 't61'], ['def-conn', 't61'],
   ['t61', 'c611'], ['c111', 'c611'], ['def-trail', 't62'], ['t62', 'a61'], ['a61', 't63'], ['t63', 't61'],
+  ['def-g', 'def-match'], ['def-sub', 'def-match'], ['def-match', 'def-maxm'], ['def-match', 'def-aug'], ['def-path', 'def-aug'],
+  ['def-maxm', 't91'], ['def-aug', 't91'],
+  ['def-bip', 't92'], ['def-deg', 't92'], ['t91', 't92'], ['def-aug', 't92'], ['t92', 'c921'], ['def-maxm', 'c921'],
 ]
-const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach, 6: PAL.lemon }
+const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach, 6: PAL.lemon, 9: PAL.coral }
+const BAND = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 9: 6 }
 
 export async function render(app) {
   document.title = '定理マップ — てん と せん'
-  const W = 1400, H = 820
+  const W = 1600, H = 860
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': '定理の依存関係マップ' })
   const gL = s('g'), gN = s('g'); svg.append(gL, gN)
   const panel = h('div.map-panel')
   const wrap = h('div.map-wrap', svg,
     h('div.map-legend', h('div.eyebrow', 'Theorem Map'), h('div.ttl', kt('授業そのものが、', '', 200, 50), h('br'), kt('ひとつのグラフ。', '', 600, 50)),
       h('p', '定義（点線）→ 定理（実線）の依存関係。ノードをタップすると内容と “つながり” が光ります。ドラッグもできます。'),
-      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5, 6].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
+      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5, 6, 9].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
     panel)
   app.append(wrap)
   // positions: initial by lecture band
-  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 240 + (lec - 1) * 200 + (Math.random() - .5) * 200, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
+  const nodes = N.map(([id, label, lec, kind, desc], i) => ({ id, label, lec, kind, desc, x: 220 + (BAND[lec] ?? (lec - 1)) * 200 + (Math.random() - .5) * 180, y: 200 + Math.random() * 500, vx: 0, vy: 0 }))
   const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]))
   const links = L.map(([a, b]) => ({ a: idx[a], b: idx[b], el: s('line', { class: 'ml' }) }))
   links.forEach((l) => gL.append(l.el))
@@ -136,7 +146,7 @@ export async function render(app) {
       A.vx += dx * f; A.vy += dy * f; B.vx -= dx * f; B.vy -= dy * f
     }
     links.forEach(({ a, b }) => { const A = nodes[a], B = nodes[b]; const dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) + .01; const f = (d - 95) * 0.02; A.vx += dx / d * f; A.vy += dy / d * f; B.vx -= dx / d * f; B.vy -= dy / d * f })
-    nodes.forEach((n) => { const tx = 240 + (n.lec - 1) * 200; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
+    nodes.forEach((n) => { const tx = 220 + (BAND[n.lec] ?? (n.lec - 1)) * 200; n.vx += (tx - n.x) * 0.004; n.vy += (H / 2 + 20 - n.y) * 0.003 })
     nodes.forEach((n) => { if (n === drag) { n.vx = n.vy = 0; return } n.vx *= .78; n.vy *= .78; n.x += n.vx * temp; n.y += n.vy * temp; n.x = Math.max(40, Math.min(W - 40, n.x)); n.y = Math.max(50, Math.min(H - 50, n.y)) })
     temp = Math.max(.06, temp * .995)
     links.forEach((l) => { const A = nodes[l.a], B = nodes[l.b]; l.el.setAttribute('x1', A.x); l.el.setAttribute('y1', A.y); l.el.setAttribute('x2', B.x); l.el.setAttribute('y2', B.y) })

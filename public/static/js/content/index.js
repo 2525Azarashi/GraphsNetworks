@@ -54,7 +54,16 @@ export const LECTURES = [
     keywords: ['多重グラフ', 'ループ', '小径', 'オイラー周遊', '準オイラー周遊', 'Hierholzer'],
     load: () => import('./lec6.js'),
   },
+  {
+    no: 9, slug: '9', color: 'coral', hex: '#FF9E9E',
+    title: 'マッチング，交互道',
+    short: 'ペアを組む・くみかえる',
+    lead: '余り同士で組めなくても、既存のペアを交互に組み替えればもう 1 組増える。そして 2 部グラフでは「どのグループも候補先が足りる」だけで全員のペアが保証される。',
+    goals: ['最大マッチングと交互道の関係を理解し、最大マッチングの判定ができる', '2部グラフにおける交互道の性質を理解する', '結婚定理を証明できる'],
+    keywords: ['マッチング', '最大マッチング', '交互道', '増大道', '2部グラフ', '結婚定理'],
+    load: () => import('./lec9.js'),
+  },
 ]
 export const UPCOMING = [
-  { no: 7, title: 'Coming soon', short: '次の講義プリントを待っています' },
+  { no: 10, title: 'Coming soon', short: '次の講義プリントを待っています' },
 ]

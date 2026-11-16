@@ -59,15 +59,27 @@ const WORDS = [
   ['オイラー周遊', 'Euler tour', 6, '全辺をちょうど 1 回ずつ通る閉小径。連結なら ⟺ 全頂点が偶点。', () => ({ pos: { ...C(ring(4)), h: [130, 60] }, E: [...ring(4).map((v, i, a) => [v, a[(i + 1) % 4]]), ['v0', 'h'], ['v2', 'h']], hi: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'h'], ['h', 'v0']] })],
   ['準オイラー周遊', 'Euler trail', 6, '全辺を通り端点が異なる小径。連結なら ⟺ 奇点ちょうど 2 個。', () => ({ pos: { a: [60, 60], b: [130, 25], c: [130, 95], d: [200, 60] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['b', 'd'], ['c', 'd']], col: { b: 'pink', c: 'pink' } })],
   ['Hierholzer のアルゴリズム', "Hierholzer's algorithm", 6, '閉小径を作り、未使用辺に触れる点で別の閉小径を差し込む。$O(|E|)$。', () => ({ pos: { a: [60, 30], b: [60, 95], c: [130, 60], d: [200, 30], e: [200, 95] }, E: [['a', 'b'], ['a', 'c'], ['b', 'c'], ['c', 'd'], ['c', 'e'], ['d', 'e']], hi: [['c', 'd'], ['d', 'e'], ['e', 'c']] })],
+  ['マッチング', 'Matching', 9, 'どの 2 辺も端点を共有しない辺部分集合 $M\\subseteq E(G)$。$(V(M),M)$ は 1-正則。', () => ({ pos: C(ring(6)), E: [['v0', 'v1'], ['v1', 'v2'], ['v2', 'v3'], ['v3', 'v4'], ['v4', 'v5'], ['v5', 'v0'], ['v0', 'v3']], hi: [['v0', 'v1'], ['v3', 'v4']], col: { v0: 'pink', v1: 'pink', v3: 'pink', v4: 'pink' } })],
+  ['被覆（飽和）', 'Cover / Saturate', 9, '$X\\subseteq V(M)$ のとき、マッチング $M$ は頂点集合 $X$ を被覆するという。', () => ({ pos: { x1: [65, 92], x2: [130, 92], x3: [195, 92], y1: [65, 28], y2: [130, 28], y3: [195, 28] }, E: [['x1', 'y1'], ['x2', 'y2'], ['x2', 'y3'], ['x3', 'y3']], hi: [['x1', 'y1'], ['x2', 'y2'], ['x3', 'y3']], col: { x1: 'pink', x2: 'pink', x3: 'pink' } })],
+  ['極大マッチング', 'Maximal matching', 9, '他のどんな辺もそのまま追加できないマッチング。最大とは限らない（例 9.3）。', () => ({ pos: { a: [45, 60], b: [102, 60], c: [158, 60], d: [215, 60] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd']], hi: [['b', 'c']], col: { b: 'lemon', c: 'lemon' } })],
+  ['最大マッチング・α′(G)', 'Maximum matching', 9, '辺の本数が最大のマッチング。その大きさ $|M|$ がマッチング数 $\\alpha\'(G)$。', () => ({ pos: { a: [45, 60], b: [102, 60], c: [158, 60], d: [215, 60] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd']], hi: [['a', 'b'], ['c', 'd']], col: { a: 'pink', b: 'pink', c: 'pink', d: 'pink' } })],
+  ['完全マッチング', 'Perfect matching', 9, '$V(G)$ 全体を被覆するマッチング。$|V(G)|=2|M|$ となり位数は偶数。', () => ({ pos: C(ring(6)), E: [...ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), ['v0', 'v3'], ['v1', 'v4']], hi: [['v0', 'v1'], ['v2', 'v3'], ['v4', 'v5']], col: Object.fromEntries(ring(6).map((v) => [v, 'mint'])) })],
+  ['M-交互道', 'M-alternating path', 9, '$M$ の辺と $E(G)\\setminus M$ の辺を交互に通る道。', () => ({ pos: { a: [38, 75], b: [84, 40], c: [130, 75], d: [176, 40], e: [222, 75] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd'], ['d', 'e']], hi: [['b', 'c'], ['d', 'e']] })],
+  ['M-増大道', 'M-augmenting path', 9, '両端が $V(M)$ に属さない奇数長の $M$-交互道。対称差 $M\\triangle E(P)$ で $+1$ 本。', () => ({ pos: { a: [45, 75], b: [102, 38], c: [158, 75], d: [215, 38] }, E: [['a', 'b'], ['b', 'c'], ['c', 'd']], hi: [['b', 'c']], col: { a: 'mint', d: 'mint', b: 'pink', c: 'pink' } })],
+  ['対称差 A △ B', 'Symmetric difference', 9, '$(A\\setminus B)\\cup(B\\setminus A)$。ちょうど片方にだけ属す要素の集合。', () => ({ pos: { a: [55, 32], b: [130, 32], c: [205, 32], d: [55, 88], e: [130, 88], f: [205, 88] }, E: [['a', 'b'], ['b', 'e'], ['e', 'd'], ['d', 'a'], ['c', 'f']], hi: [['a', 'b'], ['e', 'd']] })],
+  ['Berge の定理', "Berge's theorem", 9, '定理 9.1：$M$ が最大マッチング ⟺ $G$ は $M$-増大道を持たない。', () => ({ pos: C(ring(6)), E: ring(6).map((v, i, a) => [v, a[(i + 1) % 6]]), hi: [['v0', 'v1'], ['v2', 'v3'], ['v4', 'v5']], col: Object.fromEntries(ring(6).map((v) => [v, 'coral'])) })],
+  ['結婚定理（Hall）', "Hall's marriage theorem", 9, '定理 9.2：2 部グラフ $G(X,Y)$ が $X$ を被覆 ⟺ $\\forall U\\subseteq X,\\ |N_G(U)|\\ge|U|$。', () => ({ pos: { x1: [65, 92], x2: [130, 92], x3: [195, 92], y1: [95, 28], y2: [165, 28] }, E: [['x1', 'y1'], ['x1', 'y2'], ['x2', 'y1'], ['x3', 'y2']], col: { x1: 'pink', x2: 'pink', x3: 'pink', y1: 'sky', y2: 'sky' } })],
 ]
 
 export async function render(app) {
   document.title = 'ことば図鑑 — てん と せん'
   let filt = 0, q = ''
   const grid = h('div.gl-grid')
+  const lecMap = Object.fromEntries(LECTURES.map((l) => [l.no, l]))
   const cards = WORDS.map(([t, en, lec, d, art]) => {
-    const ga = h('div.ga', { style: { background: `color-mix(in srgb, ${LECTURES[lec - 1].hex} 20%, #FFFDF8)` } })
-    const c = h('article.gl-card.reveal', ga, h('div.gb', h('h4', t, h('small', en)), h('p', { html: d }), h('span.chip', { style: { marginTop: '8px', fontSize: '11px' } }, h('i', { style: { background: LECTURES[lec - 1].hex } }), `第${lec}回`)))
+    const L = lecMap[lec] || LECTURES[0]
+    const ga = h('div.ga', { style: { background: `color-mix(in srgb, ${L.hex} 20%, #FFFDF8)` } })
+    const c = h('article.gl-card.reveal', ga, h('div.gb', h('h4', t, h('small', en)), h('p', { html: d }), h('span.chip', { style: { marginTop: '8px', fontSize: '11px' } }, h('i', { style: { background: L.hex } }), `第${lec}回`)))
     c._lec = lec; c._txt = (t + en + d).toLowerCase()
     let built = false
     c._onin = () => {
@@ -84,7 +96,8 @@ export async function render(app) {
   })
   grid.append(...cards)
   const apply = () => cards.forEach((c) => { const ok = (!filt || c._lec === filt) && (!q || c._txt.includes(q)); c.style.display = ok ? '' : 'none'; if (ok) { c.classList.add('in'); c._onin() } })
-  const tabs = h('div.seg', ['すべて', '第1回', '第2回', '第3回', '第4回', '第5回', '第6回'].map((t, i) => { const b = h('button', { onclick: () => { filt = i; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, t); if (!i) b.classList.add('on'); return b }))
+  const tabNos = [0, ...LECTURES.map((l) => l.no)]
+  const tabs = h('div.seg', tabNos.map((no, i) => { const b = h('button', { onclick: () => { filt = no; [...tabs.children].forEach((x, j) => x.classList.toggle('on', i === j)); apply() } }, no ? `第${no}回` : 'すべて'); if (!i) b.classList.add('on'); return b }))
   const search = h('input.inp', { placeholder: '🔍 ことばを検索（例：次数、tree）', 'aria-label': '検索', style: { maxWidth: '360px' }, oninput: (e) => { q = e.target.value.trim().toLowerCase(); apply() } })
   app.append(h('section.section.wrap', { style: { paddingTop: '140px' } },
     h('div.sec-head', h('h2', kt('Word Garden.', '', 0, 40), h('span.jp.reveal', 'ことば図鑑 ・ ' + WORDS.length + ' 語')), h('p.reveal', '定義は試験で一番の武器。ミニ図とセットで覚えよう。カードにカーソルを乗せると頂点がはねます。')),
