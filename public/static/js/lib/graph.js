@@ -4,7 +4,7 @@
 import { s, clamp, tween, ease, easeSpring } from './ui.js'
 
 export const PAL = {
-  pink: '#FF8FB1', mint: '#6FD6BC', lemon: '#FFD66B', lav: '#B9A6FF', sky: '#8EC9FF', peach: '#FFB38A',
+  pink: '#FF8FB1', mint: '#6FD6BC', lemon: '#FFD66B', lav: '#B9A6FF', sky: '#8EC9FF', peach: '#FFB38A', coral: '#FF9E9E',
   white: '#FFFDF8', gray: '#E4E1EE', ink: '#2B2A4C',
 }
 export const PCYCLE = ['pink', 'mint', 'lemon', 'lav', 'sky', 'peach']
