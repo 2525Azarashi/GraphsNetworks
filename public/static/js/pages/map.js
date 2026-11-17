@@ -59,6 +59,16 @@ const N = [
   ['t62', '定理 6.2', 6, 'thm', '全頂点が偶点なら、延ばせるだけ延ばした小径は出発点で止まる。'],
   ['a61', 'Hierholzer 6.1', 6, 'thm', '閉小径を差し込んでオイラー周遊を構成。'],
   ['t63', '定理 6.3/6.4', 6, 'thm', 'アルゴリズム 6.1 は正しく、$O(|E|)$ 時間。'],
+  ['def-ham', 'ハミルトン閉路', 7, 'def', '全頂点をちょうど 1 回ずつ通る閉路（道）。もつグラフがハミルトングラフ。'],
+  ['t71', '定理 7.1', 7, 'thm', 'ハミルトングラフなら、空でない任意の $S$ で $c(G-S)\\le|S|$。'],
+  ['c711', '系 7.1.1/7.1.2', 7, 'thm', 'ハミルトングラフは 2-連結で、橋をもたない。'],
+  ['t72', 'Dirac 7.2', 7, 'thm', '$n\\ge3,\\ \\delta(G)\\ge n/2$ ⟹ ハミルトングラフ。'],
+  ['t73', 'Ore 7.3', 7, 'thm', '非隣接な任意の $x,y$ で $\\deg x+\\deg y\\ge n$ ⟹ ハミルトングラフ。'],
+  ['t74', 'Bondy–Chvátal 7.4', 7, 'thm', '$G$ がハミルトン ⟺ 閉包 $\\mathrm{cl}(G)$ がハミルトン。'],
+  ['t75', '定理 7.5', 7, 'thm', '2 部グラフがハミルトングラフ ⟹ $|A|=|B|$。'],
+  ['c751', '系 7.5.1/7.5.2', 7, 'thm', '$K_{m,n}$ がハミルトン ⟺ $m=n\\ge2$。位数は偶数。'],
+  ['def-tsp', '巡回セールスマン問題', 7, 'def', '最短のハミルトン閉路を求める問題。'],
+  ['t76', '定理 7.6', 7, 'thm', 'TSP の判定版は NP 完全（多項式時間の厳密解法は未発見）。'],
   ['def-match', 'マッチング', 9, 'def', '互いに端点を共有しない辺部分集合 $M\\subseteq E(G)$。$(V(M),M)$ は 1-正則。'],
   ['def-maxm', '極大・最大・完全', 9, 'def', '完全 ⟹ 最大（$|M|=\\alpha\'(G)$）⟹ 極大。逆は偽。'],
   ['def-aug', '交互道・増大道', 9, 'def', '$M$ と $E\\setminus M$ を交互に通る道。両端が $V(M)$ 外なら $M$-増大道。'],
@@ -78,23 +88,27 @@ const L = [
   ['p51', 't52'], ['def-con', 't52'], ['t52', 't53'], ['def-kappa', 't53'],
   ['def-g', 'def-multi'], ['def-walk', 'def-trail'], ['def-multi', 'def-trail'], ['def-trail', 'def-euler'], ['def-euler', 't61'], ['c111', 't61'], ['def-conn', 't61'],
   ['t61', 'c611'], ['c111', 'c611'], ['def-trail', 't62'], ['t62', 'a61'], ['a61', 't63'], ['t63', 't61'],
+  ['def-path', 'def-ham'], ['def-ham', 't71'], ['def-vcut', 't71'], ['t71', 'c711'], ['def-kappa', 'c711'],
+  ['def-deg', 't72'], ['def-ham', 't72'], ['t72', 't73'], ['def-deg', 't73'], ['t73', 't74'], ['def-ham', 't74'],
+  ['def-bip', 't75'], ['def-ham', 't75'], ['t75', 'c751'], ['t24', 'c751'],
+  ['def-ham', 'def-tsp'], ['def-tsp', 't76'], ['t74', 't76'],
   ['def-g', 'def-match'], ['def-sub', 'def-match'], ['def-match', 'def-maxm'], ['def-match', 'def-aug'], ['def-path', 'def-aug'],
   ['def-maxm', 't91'], ['def-aug', 't91'],
   ['def-bip', 't92'], ['def-deg', 't92'], ['t91', 't92'], ['def-aug', 't92'], ['t92', 'c921'], ['def-maxm', 'c921'],
 ]
-const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach, 6: PAL.lemon, 9: PAL.coral }
-const BAND = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 9: 6 }
+const COL = { 1: PAL.pink, 2: PAL.mint, 3: PAL.sky, 4: PAL.lav, 5: PAL.peach, 6: PAL.lemon, 7: PAL.aqua, 9: PAL.coral }
+const BAND = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 9: 7 }
 
 export async function render(app) {
   document.title = '定理マップ — てん と せん'
-  const W = 1600, H = 860
+  const W = 1800, H = 860
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': '定理の依存関係マップ' })
   const gL = s('g'), gN = s('g'); svg.append(gL, gN)
   const panel = h('div.map-panel')
   const wrap = h('div.map-wrap', svg,
     h('div.map-legend', h('div.eyebrow', 'Theorem Map'), h('div.ttl', kt('授業そのものが、', '', 200, 50), h('br'), kt('ひとつのグラフ。', '', 600, 50)),
       h('p', '定義（点線）→ 定理（実線）の依存関係。ノードをタップすると内容と “つながり” が光ります。ドラッグもできます。'),
-      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5, 6, 9].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
+      h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } }, [1, 2, 3, 4, 5, 6, 7, 9].map((n) => h('span.chip', { style: { fontFamily: 'var(--f-round)' } }, h('i', { style: { background: COL[n] } }), `第${n}回`)))),
     panel)
   app.append(wrap)
   // positions: initial by lecture band
